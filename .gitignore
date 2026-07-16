@@ -42,7 +42,9 @@ Thumbs.db
 vite.config.ts.timestamp-*
 
 # ---- Agent / AI Tool Internals (NOT for repo) ----
-.figma/
+.figma/**
+!.figma/make/
+!.figma/make/site.json
 .impeccable/
 .agents/
 skills-lock.json

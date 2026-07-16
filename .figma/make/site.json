@@ -1,0 +1,14 @@
+{
+  "title": "Thateasy_qr — Premium Editorial QR Codes",
+  "description": "Enables users to create and customize dynamic QR codes with real-time design tools, track scan analytics, and compare premium features for marketing success.",
+  "icons": {
+    "icon": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238E9C78' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='2' y='2' width='7' height='7' rx='1' /%3E%3Crect x='4.5' y='4.5' width='2' height='2' fill='%238E9C78' stroke='none' /%3E%3Crect x='15' y='2' width='7' height='7' rx='1' /%3E%3Crect x='17.5' y='4.5' width='2' height='2' fill='%238E9C78' stroke='none' /%3E%3Crect x='2' y='15' width='7' height='7' rx='1' /%3E%3Crect x='4.5' y='17.5' width='2' height='2' fill='%238E9C78' stroke='none' /%3E%3Crect x='15' y='15' width='3' height='3' fill='%231C1C1A' stroke='none' /%3E%3Crect x='19' y='19' width='3' height='3' fill='%231C1C1A' stroke='none' /%3E%3Crect x='11' y='11' width='3' height='3' fill='%238E9C78' stroke='none' /%3E%3C/svg%3E"
+  },
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

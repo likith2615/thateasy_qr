@@ -1,0 +1,17 @@
+import { createClient } from "@supabase/supabase-js"
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || ""
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || ""
+
+// Checks if the user has provided valid Supabase credentials
+export const isSupabaseConfigured = Boolean(
+  supabaseUrl &&
+    supabaseAnonKey &&
+    supabaseUrl !== "https://your-project-ref.supabase.co" &&
+    supabaseAnonKey !== "your-anon-key-here" &&
+    supabaseUrl.includes("supabase.co"),
+)
+
+export const supabase = isSupabaseConfigured
+  ? createClient(supabaseUrl, supabaseAnonKey)
+  : null

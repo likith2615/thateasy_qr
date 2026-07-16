@@ -1,0 +1,55 @@
+# ============================================================
+# Thateasy_qr — .gitignore
+# ============================================================
+
+# ---- Dependencies ----
+node_modules/
+.pnp
+.pnp.js
+
+# ---- Build Output ----
+dist/
+dist-ssr/
+build/
+
+# ---- Environment / Secrets ----
+.env
+.env.local
+.env.*.local
+.env.production
+
+# ---- Logs ----
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+# ---- Editor / OS ----
+.DS_Store
+Thumbs.db
+*.suo
+*.user
+.idea/
+.vscode/settings.json
+*.swp
+*.swo
+
+# ---- TypeScript ----
+*.tsbuildinfo
+
+# ---- Vite ----
+vite.config.ts.timestamp-*
+
+# ---- Agent / AI Tool Internals (NOT for repo) ----
+.figma/
+.impeccable/
+.agents/
+skills-lock.json
+CLAUDE.md
+
+# ---- Lock files (keep only one — npm) ----
+pnpm-lock.yaml
+
+# ---- Misc ----
+*.local

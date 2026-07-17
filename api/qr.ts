@@ -12,7 +12,7 @@ export default async function handler(req: any, res: any) {
     if (req.method === "GET") {
       const { data, error } = await supabase
         .from("qrs")
-        .select("*")
+        .select("id, name, type, is_dynamic, is_active, destination_url, content_data, styles")
         .eq("id", qrId)
         .single()
       if (error) throw error

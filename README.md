@@ -263,6 +263,7 @@ Deployed on Vercel: https://thateasy-qr-snowy.vercel.app
 | `4c00c39` | fix: store uploaded files as persistent Data URIs instead of temporary browser-memory blob URLs |
 | `e17948a` | fix: call setView('dashboard') in handleLoginSuccess for immediate view transition upon login |
 | `df2d7c7` | security: sanitize GET response in api/qr.ts to exclude user_id from public network responses |
+| `61b3ccc` | feat: combine Maps and UPI Payment into one unified QR destination page and fix mobile header responsiveness |
 
 ---
 

@@ -215,9 +215,6 @@ export default function CtaFooter() {
               links: [
                 "Features",
                 "Analytics",
-                "Integrations",
-                "API Docs",
-                "Changelog",
               ],
             },
             {
@@ -231,7 +228,7 @@ export default function CtaFooter() {
             },
             {
               heading: "Company",
-              links: ["About", "Blog", "Careers", "Press Kit", "Contact"],
+              links: ["About", "Blog", "Contact"],
             },
           ].map(({ heading, links }) => (
             <div

@@ -22,20 +22,28 @@ export default function PublicFilePage({ qr }: { qr: QRCodeData }) {
     if (!fileUrl || fileUrl === "#") return
     setDownloading(true)
     try {
-      const response = await fetch(fileUrl, { mode: "cors" })
-      if (!response.ok) throw new Error("Fetch failed")
-      const blob = await response.blob()
-      const blobUrl = URL.createObjectURL(blob)
-      const link = document.createElement("a")
-      link.href = blobUrl
-      link.download = fileName
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
-      setTimeout(() => URL.revokeObjectURL(blobUrl), 2000)
+      if (fileUrl.startsWith("data:")) {
+        const link = document.createElement("a")
+        link.href = fileUrl
+        link.download = fileName
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+      } else {
+        const response = await fetch(fileUrl, { mode: "cors" })
+        if (!response.ok) throw new Error("Fetch failed")
+        const blob = await response.blob()
+        const blobUrl = URL.createObjectURL(blob)
+        const link = document.createElement("a")
+        link.href = blobUrl
+        link.download = fileName
+        document.body.appendChild(link)
+        link.click()
+        document.body.removeChild(link)
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 10000)
+      }
     } catch (err) {
-      console.warn("Direct blob download failed, opening in new tab:", err)
-      // Fallback: open URL directly in new tab if blob fetch fails
+      console.warn("Direct download failed, opening in new tab:", err)
       window.open(fileUrl, "_blank", "noopener,noreferrer")
     } finally {
       setDownloading(false)

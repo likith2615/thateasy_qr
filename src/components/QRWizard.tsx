@@ -572,12 +572,17 @@ export default function QRWizard({ user, editQrId, onSave }: QRWizardProps) {
       return
     }
 
-    setFileData({
-      fileName: file.name,
-      fileSize: `${(file.size / (1024 * 1024)).toFixed(2)} MB`,
-      fileType: file.type,
-      fileUrl: URL.createObjectURL(file),
-    })
+    const reader = new FileReader()
+    reader.onload = (event) => {
+      const result = event.target?.result as string
+      setFileData({
+        fileName: file.name,
+        fileSize: `${(file.size / (1024 * 1024)).toFixed(2)} MB`,
+        fileType: file.type,
+        fileUrl: result,
+      })
+    }
+    reader.readAsDataURL(file)
   }
 
   // Get raw code string to render scannable preview

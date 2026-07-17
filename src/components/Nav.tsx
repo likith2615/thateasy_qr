@@ -21,7 +21,7 @@ export default function Nav() {
         style={{
           maxWidth: "1280px",
           margin: "0 auto",
-          padding: "0 2rem",
+          padding: "0 1rem",
           height: "64px",
           display: "flex",
           alignItems: "center",
@@ -95,8 +95,8 @@ export default function Nav() {
               borderRadius: "2px",
               textDecoration: "none",
               transition: "background-color 0.2s",
-              display: "inline-block",
             }}
+            className="hidden-mobile"
             onMouseEnter={(e) =>
               ((e.target as HTMLElement).style.backgroundColor = "#3A3A38")
             }

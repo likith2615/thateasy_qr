@@ -12,6 +12,7 @@ import Login from "./components/Login"
 import PublicVCard from "./components/PublicVCard"
 import PublicLinkPage from "./components/PublicLinkPage"
 import PublicFilePage from "./components/PublicFilePage"
+import PublicMapPage from "./components/PublicMapPage"
 import FeaturesPage from "./components/FeaturesPage"
 import HowItWorksPage from "./components/HowItWorksPage"
 import PricingPage from "./components/PricingPage"
@@ -28,6 +29,7 @@ type ViewType =
   | "vcard"
   | "linkpage"
   | "file"
+  | "map"
   | "redirecting"
   | "404"
   | "loading"
@@ -148,6 +150,8 @@ export default function App() {
             dest = `${window.location.origin}${window.location.pathname}?linkpage=${qr.id}`
           } else if (qr.type === "file") {
             dest = `${window.location.origin}${window.location.pathname}?file=${qr.id}`
+          } else if (qr.type === "google-maps" || qr.type === "maps") {
+            dest = `${window.location.origin}${window.location.pathname}?map=${qr.id}`
           }
 
           setTargetUrl(dest)
@@ -167,9 +171,10 @@ export default function App() {
     const vcardId = searchParams.get("vcard")
     const linkpageId = searchParams.get("linkpage")
     const fileId = searchParams.get("file")
+    const mapId = searchParams.get("map")
 
-    if (vcardId || linkpageId || fileId) {
-      const targetId = (vcardId || linkpageId || fileId) as string
+    if (vcardId || linkpageId || fileId || mapId) {
+      const targetId = (vcardId || linkpageId || fileId || mapId) as string
       try {
         const qr = await db.getQRById(targetId)
         if (qr && qr.is_active) {
@@ -177,6 +182,7 @@ export default function App() {
           if (vcardId) setView("vcard")
           else if (linkpageId) setView("linkpage")
           else if (fileId) setView("file")
+          else if (mapId) setView("map")
           return
         } else {
           setView("404")
@@ -350,6 +356,10 @@ export default function App() {
 
     if (view === "file" && publicQr) {
       return <PublicFilePage qr={publicQr} />
+    }
+
+    if (view === "map" && publicQr) {
+      return <PublicMapPage qr={publicQr} />
     }
 
     if (view === "login" || view === "signup") {

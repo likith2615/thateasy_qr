@@ -676,7 +676,7 @@ export default function QRWizard({ user, editQrId, onSave }: QRWizardProps) {
         break
       case "google-maps":
         content_data = { mapLat, mapLng, mapAddress, enableMapUpi, mapUpiPa, mapUpiPn, mapUpiAm }
-        destination_url = `https://www.google.com/maps/search/?api=1&query=${mapLat},${mapLng}`
+        destination_url = `${window.location.origin}${window.location.pathname}?map=`
         break
     }
 

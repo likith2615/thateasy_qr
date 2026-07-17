@@ -115,8 +115,16 @@ export default function Login({
       if (isSignUp) {
         const user = await db.signUp(email, password, name, selectedAvatar, plan)
         if (user) {
-          // Show email verification prompt instead of immediately logging in
-          setSignupSuccess(true)
+          try {
+            const signedInUser = await db.signIn(email, password)
+            if (signedInUser) {
+              onLoginSuccess({ id: signedInUser.id, email: signedInUser.email || email })
+              return
+            }
+          } catch (e) {
+            // Fallback to direct login success
+          }
+          onLoginSuccess({ id: user.id, email: user.email || email })
         }
       } else {
         const user = await db.signIn(email, password)

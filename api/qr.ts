@@ -54,6 +54,7 @@ export default async function handler(req: any, res: any) {
     }
     return res.status(405).json({ message: "Method Not Allowed" })
   } catch (err: any) {
-    return res.status(500).json({ message: err.message })
+    console.error("QR Handler Error:", err)
+    return res.status(500).json({ message: err.message || "Failed to process QR operation" })
   }
 }

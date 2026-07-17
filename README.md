@@ -1,4 +1,4 @@
-﻿<div align="center">
+<div align="center">
 
 ```
 ████████╗██╗  ██╗ █████╗ ████████╗███████╗ █████╗ ███████╗██╗   ██╗       ██████╗ ██████╗
@@ -256,6 +256,13 @@ Deployed on Vercel: https://thateasy-qr-snowy.vercel.app
 | `c97b55b` | Update .gitignore |
 | `2a362fd` | feat: implement 10 QR code types, dual maps picker (Leaflet & Google Maps), geolocation tracking, UPI payment, and video uploads |
 | `9c33875` | chore: remove API Docs, Integrations, Changelog, Careers, and Press Kit from footer |
+| `57b49c1` | docs: add research document, project documentation, full README overhaul, and remove developer API keys from profile |
+| `23ad498` | fix: auto sign-in and redirect straight to dashboard upon registration |
+| `d92f659` | fix: resolve RLS policy violation on qrs table and add error logging |
+| `72a2af1` | fix: replace cross-origin link download with secure blob fetch downloader to prevent security warnings |
+| `4c00c39` | fix: store uploaded files as persistent Data URIs instead of temporary browser-memory blob URLs |
+| `e17948a` | fix: call setView('dashboard') in handleLoginSuccess for immediate view transition upon login |
+| `df2d7c7` | security: sanitize GET response in api/qr.ts to exclude user_id from public network responses |
 
 ---
 

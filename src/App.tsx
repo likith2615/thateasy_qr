@@ -281,6 +281,7 @@ export default function App() {
   const handleLoginSuccess = (usr: { id: string; email: string }) => {
     setUser(usr)
     window.location.hash = "#dashboard"
+    setView("dashboard")
   }
 
   const handleLogout = async () => {

@@ -472,11 +472,14 @@ function figmaApiProxy(): Plugin {
               if (error) throw error
               res.end(JSON.stringify(data.user))
             } else if (action === "signup") {
-              const { email, password, name, avatarUrl, plan } = body
+              const { email, password, name, avatarUrl, plan, redirectTo } = body
               const { data, error } = await supabase.auth.signUp({
                 email,
                 password,
-                options: { data: { full_name: name } },
+                options: {
+                  data: { full_name: name },
+                  emailRedirectTo: redirectTo,
+                },
               })
               if (error) throw error
               if (data.user) {

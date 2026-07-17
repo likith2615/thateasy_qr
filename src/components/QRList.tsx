@@ -186,6 +186,12 @@ export default function QRList({ user, onEditQR, onCreateQR }: QRListProps) {
             <option value="url">Website URL</option>
             <option value="vcard">Business Card</option>
             <option value="linkpage">Multi-Link Page</option>
+            <option value="whatsapp">WhatsApp</option>
+            <option value="phone">Phone Call</option>
+            <option value="email">Email</option>
+            <option value="sms">SMS</option>
+            <option value="upi">UPI Payment</option>
+            <option value="google-maps">Maps</option>
             <option value="file">File Share</option>
           </select>
         </div>
@@ -245,7 +251,9 @@ export default function QRList({ user, onEditQR, onCreateQR }: QRListProps) {
                             ? "Business Card"
                             : qr.type === "linkpage"
                               ? "Multi-Link"
-                              : qr.type.toUpperCase()}
+                              : qr.type === "google-maps"
+                                ? "Maps"
+                                : qr.type.toUpperCase()}
                         </span>
                         <span
                           className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded-sm uppercase ${
@@ -267,8 +275,20 @@ export default function QRList({ user, onEditQR, onCreateQR }: QRListProps) {
                             : qr.type === "vcard"
                               ? `${qr.content_data?.firstName} ${qr.content_data?.lastName} (VCF)`
                               : qr.type === "linkpage"
-                                ? `${qr.content_data?.title} (Biolink)`
-                                : qr.content_data?.fileName || "Custom Content"}
+                                ? `${qr.content_data?.title || qr.name} (Biolink)`
+                                : qr.type === "whatsapp"
+                                  ? `WhatsApp: ${qr.content_data?.waPhone}`
+                                  : qr.type === "phone"
+                                    ? `Phone: ${qr.content_data?.phoneNum}`
+                                    : qr.type === "email"
+                                      ? `Email: ${qr.content_data?.emailAddr}`
+                                      : qr.type === "sms"
+                                        ? `SMS: ${qr.content_data?.smsPhone}`
+                                        : qr.type === "upi"
+                                          ? `UPI: ${qr.content_data?.upiPa}`
+                                          : qr.type === "google-maps"
+                                            ? `Location: ${qr.content_data?.mapLat}, ${qr.content_data?.mapLng}`
+                                            : qr.content_data?.fileName || "Custom Content"}
                         </span>
                       </div>
 

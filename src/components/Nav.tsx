@@ -1,6 +1,8 @@
 import { useState } from "react"
 import QRLogo from "./QRLogo"
 
+const scrollToTop = () => window.scrollTo({ top: 0, behavior: "instant" })
+
 export default function Nav() {
   const [open, setOpen] = useState(false)
 
@@ -27,7 +29,7 @@ export default function Nav() {
         }}
       >
         {/* Logo */}
-        <a href="#" style={{ textDecoration: "none" }}>
+        <a href="#" style={{ textDecoration: "none" }} onClick={scrollToTop}>
           <QRLogo size={22} fontSize="1.5rem" />
         </a>
 
@@ -59,6 +61,7 @@ export default function Nav() {
                 onMouseLeave={(e) =>
                   ((e.target as HTMLElement).style.color = "#6F6F6A")
                 }
+                onClick={scrollToTop}
               >
                 {item}
               </a>
@@ -77,6 +80,7 @@ export default function Nav() {
               fontWeight: 500,
             }}
             className="hidden-mobile"
+            onClick={scrollToTop}
           >
             Sign in
           </a>
@@ -99,6 +103,7 @@ export default function Nav() {
             onMouseLeave={(e) =>
               ((e.target as HTMLElement).style.backgroundColor = "#1C1C1A")
             }
+            onClick={scrollToTop}
           >
             Get started free
           </a>
@@ -153,7 +158,10 @@ export default function Nav() {
                     textDecoration: "none",
                     borderBottom: "1px solid #EDE9E0",
                   }}
-                  onClick={() => setOpen(false)}
+                  onClick={() => {
+                    setOpen(false)
+                    scrollToTop()
+                  }}
                 >
                   {item}
                 </a>

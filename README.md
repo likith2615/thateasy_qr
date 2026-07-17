@@ -1,4 +1,4 @@
-﻿<div align="center">
+<div align="center">
 
 ```
 ████████╗██╗  ██╗ █████╗ ████████╗███████╗ █████╗ ███████╗██╗   ██╗       ██████╗ ██████╗
@@ -56,18 +56,32 @@
 - **Export** — download as SVG or high-resolution PNG
 - **Compact 12% margin** — QR fills the card without dead space
 
-### 🧙 QR Wizard (Multi-type Creation)
-- **URL** — standard web link QR
-- **vCard** — digital business card with name, phone, email, org
-- **File Upload** — secure hosted file with download page
-- **Link Page** — branded link-in-bio destination
-- **WiFi** — SSID + password embedded QR
+### 🧙 QR Wizard (10 QR Types & Interactive Maps)
+- **Website URL** — standard web link QR
+- **Digital Business Card (vCard)** — digital card with profile picture and save-to-contacts
+- **Multi-Link Page** — branded link-in-bio landing page
+- **WhatsApp QR** — opens pre-filled conversation links
+- **Phone Call QR** — prompts device dialer
+- **Email QR** — pre-composed recipient, subject, and body drafts
+- **SMS QR** — pre-filled texts
+- **UPI Payment QR** — standalone UPI payment codes (India)
+- **File Share** — secure hosted PDFs, images (`.jpg`/`.png`), and videos (`.mp4`/`.mov`/`.avi`)
+- **Maps QR** — dual provider location selector:
+  * **OpenStreetMap (Free)**: Uses Leaflet maps. Runs immediately without API keys.
+  * **Google Maps (Premium)**: Uses official Google Maps JS API, with optional API Key settings saved in `localStorage`.
+  * **User Geolocation**: "My Location" button requests browser coordinate permissions to center and marker pin device location instantly.
+  * **OSM Geocoding**: Free Nominatim search repositions pins without paid API calls.
+  * **Associated UPI Codes**: Generates payment QR alongside map location with dual-preview scanner tabs.
+
+### 📹 Media Player & Public Viewers
+- **Responsive Previews**: Public file pages embed dynamic image viewers or `<video>` player controls for guest scans.
+- **Dynamic File Validation**: Automatic file limit enforcement (Free: 1 MB · Teams: 20 MB).
 
 ### 📊 Analytics & Dashboard
 - **Overview stats** — total scans, active QRs, countries reached, scan trend graph
 - **Per-QR analytics** — device breakdown (pie), OS breakdown, browser breakdown, timeline chart
-- **QR management** — create, edit, delete, toggle active/inactive per code
-- **File size limits** — Free plan: 1 MB · Teams plan: 20 MB
+- **QR management** — create, edit, delete, filter, and search all 10 types
+- **Redirection CTA Footer**: Smart redirection logic triggers dashboard wizards automatically on login.
 
 ### 🔐 Auth & Security
 - **Supabase GoTrue Auth** — email/password with profile seeding
@@ -188,7 +202,7 @@ create table if not exists public.qrs (
   id              uuid primary key default gen_random_uuid(),
   user_id         uuid not null references public.profiles(id) on delete cascade,
   name            text not null,
-  type            text not null check (type in ('url', 'vcard', 'file', 'linkpage', 'wifi')),
+  type            text not null check (type in ('url', 'vcard', 'file', 'linkpage', 'wifi', 'whatsapp', 'phone', 'email', 'sms', 'upi', 'google-maps')),
   is_dynamic      boolean not null default true,
   is_active       boolean not null default true,
   destination_url text,

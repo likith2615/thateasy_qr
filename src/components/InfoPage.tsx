@@ -12,12 +12,22 @@ interface InfoPageProps {
     | "contact"
     | "terms"
     | "privacy"
+  isLoggedIn?: boolean
   onBack: () => void
 }
 
-export default function InfoPage({ mode, onBack }: InfoPageProps) {
+export default function InfoPage({ mode, isLoggedIn, onBack }: InfoPageProps) {
   const [contactSubmitted, setContactSubmitted] = useState(false)
   const [formData, setFormData] = useState({ name: "", email: "", msg: "" })
+
+  const handleCreateYourOwn = (type: string) => {
+    sessionStorage.setItem("thateasy_qr_pending_create_type", type)
+    if (isLoggedIn) {
+      window.location.hash = "#dashboard"
+    } else {
+      window.location.hash = "#login"
+    }
+  }
 
   const handleContactSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -86,13 +96,25 @@ export default function InfoPage({ mode, onBack }: InfoPageProps) {
                 <p className="text-xs text-[#6F6F6A] italic">Acquerello rice, chanterelle mushrooms, black truffle shavings, aged Parmigiano-Reggiano.</p>
               </div>
             </div>
-            <div className="bg-[#EDE9E0] p-4 rounded-xs border border-[#D8D4C8]">
+            <div className="bg-[#EDE9E0] p-4 rounded-xs border border-[#D8D4C8] mb-6">
               <h4 className="text-xs font-mono font-bold text-[#1C1C1A] uppercase tracking-wider">Why restaurants prefer Thateasy_qr:</h4>
               <ul className="text-xs text-[#6F6F6A] list-disc list-inside space-y-2 mt-3 leading-relaxed">
                 <li><strong className="text-[#1C1C1A]">100% Dynamic:</strong> Change pricing or seasonal items instantly from your dashboard.</li>
                 <li><strong className="text-[#1C1C1A]">Ultra-High Scan Rates:</strong> Embedded outlines ensure fast scanning under dim dining lights.</li>
                 <li><strong className="text-[#1C1C1A]">Zero Neon Clutter:</strong> Minimalist design preserves your table aesthetics.</li>
               </ul>
+            </div>
+            <div className="pt-4 border-t border-[#EDE9E0] flex justify-between items-center flex-wrap gap-4">
+              <div>
+                <h4 className="font-serif font-bold text-sm text-[#1C1C1A]">Ready to design your contactless menu?</h4>
+                <p className="text-xs text-[#6F6F6A]">Upload your PDF menu and get a custom QR code instantly.</p>
+              </div>
+              <button
+                onClick={() => handleCreateYourOwn("file")}
+                className="bg-[#1C1C1A] hover:bg-[#3A3A38] text-[#F7F5F0] text-xs font-semibold px-4 py-2.5 rounded-xs tracking-wider uppercase font-mono cursor-pointer transition-colors"
+              >
+                Create Menu QR →
+              </button>
             </div>
           </div>
         )
@@ -128,6 +150,18 @@ export default function InfoPage({ mode, onBack }: InfoPageProps) {
                 </div>
               </div>
             </div>
+            <div className="pt-4 border-t border-[#EDE9E0] flex justify-between items-center flex-wrap gap-4">
+              <div>
+                <h4 className="font-serif font-bold text-sm text-[#1C1C1A]">Design custom tickets for your event</h4>
+                <p className="text-xs text-[#6F6F6A]">Generate dynamic, scannable QR tickets for your guests.</p>
+              </div>
+              <button
+                onClick={() => handleCreateYourOwn("url")}
+                className="bg-[#1C1C1A] hover:bg-[#3A3A38] text-[#F7F5F0] text-xs font-semibold px-4 py-2.5 rounded-xs tracking-wider uppercase font-mono cursor-pointer transition-colors"
+              >
+                Create Ticket QR →
+              </button>
+            </div>
           </div>
         )
 
@@ -154,6 +188,18 @@ export default function InfoPage({ mode, onBack }: InfoPageProps) {
                 <div><span className="font-bold text-[#1C1C1A]">Tailored:</span> Porto, Portugal</div>
                 <div><span className="font-bold text-[#1C1C1A]">Material:</span> 100% Certified Organic Linen</div>
               </div>
+            </div>
+            <div className="pt-4 border-t border-[#EDE9E0] flex justify-between items-center flex-wrap gap-4">
+              <div>
+                <h4 className="font-serif font-bold text-sm text-[#1C1C1A]">Connect packaging to digital experiences</h4>
+                <p className="text-xs text-[#6F6F6A]">Link products to carbon reports, tracing info, or user manuals.</p>
+              </div>
+              <button
+                onClick={() => handleCreateYourOwn("url")}
+                className="bg-[#1C1C1A] hover:bg-[#3A3A38] text-[#F7F5F0] text-xs font-semibold px-4 py-2.5 rounded-xs tracking-wider uppercase font-mono cursor-pointer transition-colors"
+              >
+                Create Packaging QR →
+              </button>
             </div>
           </div>
         )
@@ -185,6 +231,18 @@ export default function InfoPage({ mode, onBack }: InfoPageProps) {
                 <div>🌐 nxtgensec.com</div>
               </div>
             </div>
+            <div className="pt-4 border-t border-[#EDE9E0] flex justify-between items-center flex-wrap gap-4">
+              <div>
+                <h4 className="font-serif font-bold text-sm text-[#1C1C1A]">Share contact info instantly</h4>
+                <p className="text-xs text-[#6F6F6A]">Generate a digital business card (vCard) for your team or self.</p>
+              </div>
+              <button
+                onClick={() => handleCreateYourOwn("vcard")}
+                className="bg-[#1C1C1A] hover:bg-[#3A3A38] text-[#F7F5F0] text-xs font-semibold px-4 py-2.5 rounded-xs tracking-wider uppercase font-mono cursor-pointer transition-colors"
+              >
+                Create Business Card QR →
+              </button>
+            </div>
           </div>
         )
 
@@ -212,6 +270,18 @@ export default function InfoPage({ mode, onBack }: InfoPageProps) {
                 <p className="text-[10px] text-[#6F6F6A] leading-relaxed">Introducing Thateasy_qr's "Editorial Sanctuary" design platform for custom QR creation.</p>
                 <button className="text-[10px] font-mono text-[#8E9C78] hover:text-[#1C1C1A] underline font-bold">Download PDF Release</button>
               </div>
+            </div>
+            <div className="pt-4 border-t border-[#EDE9E0] flex justify-between items-center flex-wrap gap-4">
+              <div>
+                <h4 className="font-serif font-bold text-sm text-[#1C1C1A]">Build a dynamic media press-kit</h4>
+                <p className="text-xs text-[#6F6F6A]">Distribute logo files, copy assets, and press releases.</p>
+              </div>
+              <button
+                onClick={() => handleCreateYourOwn("file")}
+                className="bg-[#1C1C1A] hover:bg-[#3A3A38] text-[#F7F5F0] text-xs font-semibold px-4 py-2.5 rounded-xs tracking-wider uppercase font-mono cursor-pointer transition-colors"
+              >
+                Create Press Kit QR →
+              </button>
             </div>
           </div>
         )

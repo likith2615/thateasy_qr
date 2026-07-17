@@ -199,6 +199,7 @@ export const db = {
   signUp: async (email: string, password: string, name: string, avatarUrl?: string, plan?: string) => {
     const defaultAvatar = avatarUrl || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80"
     const userPlan = plan || "free"
+    const redirectTo = typeof window !== "undefined" ? window.location.origin : ""
 
     if (isSupabaseConfigured) {
       return await apiFetch("POST", "/api/auth?action=signup", {
@@ -207,6 +208,7 @@ export const db = {
         name,
         avatarUrl: defaultAvatar,
         plan: userPlan,
+        redirectTo,
       })
     } else {
       const newUser = { id: `user-${Date.now()}`, email }

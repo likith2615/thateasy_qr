@@ -33,6 +33,13 @@ export default function Dashboard({ user, onLogout }: DashboardProps) {
     setIsCloud(db.isCloudMode())
     // Fetch profile
     db.getProfile(user.id).then((p) => setProfile(p))
+
+    // Handle pending QR code creation type from InfoPage
+    const pendingType = sessionStorage.getItem("thateasy_qr_pending_create_type")
+    if (pendingType) {
+      setEditQrId(null)
+      setActiveTab("create-qr")
+    }
   }, [user.id])
 
   const handleEditQR = (qrId: string) => {

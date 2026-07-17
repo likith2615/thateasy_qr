@@ -246,6 +246,13 @@ export default function App() {
     }
   }
 
+  // Scroll to top on every view change
+  useEffect(() => {
+    if (view !== "loading") {
+      window.scrollTo({ top: 0, behavior: "instant" })
+    }
+  }, [view])
+
   useEffect(() => {
     // Run initial route check
     handleRouting()
@@ -392,6 +399,7 @@ export default function App() {
       return (
         <InfoPage
           mode={view as any}
+          isLoggedIn={!!user}
           onBack={() => {
             window.location.hash = ""
             setView("landing")

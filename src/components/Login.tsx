@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { QrCode, Key, Mail, User, ShieldAlert } from "lucide-react"
+import { Key, Mail, User, ShieldAlert, CheckCircle2, XCircle } from "lucide-react"
 import { db } from "../lib/db"
 import QRLogo from "./QRLogo"
 import BotPreventionPro from "./BotPreventionPro"
@@ -9,6 +9,16 @@ interface LoginProps {
   initialSignUp?: boolean
   onLoginSuccess: (user: { id: string; email: string }) => void
   onBackToLanding: () => void
+}
+
+// Password strength checker
+function getPasswordStrength(pw: string) {
+  return {
+    minLength: pw.length >= 6,
+    hasUpper: /[A-Z]/.test(pw),
+    hasNumber: /[0-9]/.test(pw),
+    hasSpecial: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pw),
+  }
 }
 
 export default function Login({
@@ -26,6 +36,8 @@ export default function Login({
   const [isVerified, setIsVerified] = useState(false)
   const [triggerWarning, setTriggerWarning] = useState(false)
   const [passwordFocused, setPasswordFocused] = useState(false)
+  const [signupSuccess, setSignupSuccess] = useState(false)
+  const [rateLimitCooldown, setRateLimitCooldown] = useState(0)
 
   // Gender & Plan Selection
   const [gender, setGender] = useState<"male" | "female">("male")
@@ -33,6 +45,9 @@ export default function Login({
   const [selectedAvatar, setSelectedAvatar] = useState("")
   const [modalMode, setModalMode] = useState<"terms" | "privacy" | null>(null)
   const [showTeamsModal, setShowTeamsModal] = useState(false)
+
+  const pwStrength = getPasswordStrength(password)
+  const showStrength = isSignUp && password.length > 0
 
   const maleAvatars = [
     "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&q=80",
@@ -100,7 +115,8 @@ export default function Login({
       if (isSignUp) {
         const user = await db.signUp(email, password, name, selectedAvatar, plan)
         if (user) {
-          onLoginSuccess({ id: user.id, email: user.email || email })
+          // Show email verification prompt instead of immediately logging in
+          setSignupSuccess(true)
         }
       } else {
         const user = await db.signIn(email, password)
@@ -110,9 +126,27 @@ export default function Login({
       }
     } catch (err: any) {
       console.error(err)
-      setErrorMsg(
-        err.message || "Authentication failed. Please verify credentials.",
-      )
+      const msg: string = err.message || ""
+      if (
+        msg.toLowerCase().includes("rate limit") ||
+        msg.toLowerCase().includes("over_email_send_rate_limit") ||
+        msg.toLowerCase().includes("email rate")
+      ) {
+        // Start a 60-second cooldown to stop retry spam
+        let secs = 60
+        setRateLimitCooldown(secs)
+        setErrorMsg("")
+        const timer = setInterval(() => {
+          secs -= 1
+          setRateLimitCooldown(secs)
+          if (secs <= 0) {
+            clearInterval(timer)
+            setRateLimitCooldown(0)
+          }
+        }, 1000)
+      } else {
+        setErrorMsg(msg || "Authentication failed. Please verify credentials.")
+      }
     } finally {
       setLoading(false)
     }
@@ -134,9 +168,68 @@ export default function Login({
     }
   }
 
+  // Email verification success screen
+  if (signupSuccess) {
+    return (
+      <div className="min-h-screen bg-[#F7F5F0] flex flex-col items-center justify-center py-12 px-4 font-sans">
+        <div className="w-full max-w-sm text-center space-y-5">
+          {/* Mail icon */}
+          <div className="w-20 h-20 mx-auto rounded-full bg-[#8E9C78]/10 border border-[#8E9C78]/20 flex items-center justify-center">
+            <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="#8E9C78" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="2" y="4" width="20" height="16" rx="2"/>
+              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+            </svg>
+          </div>
+
+          <div className="space-y-2">
+            <span className="text-[10px] font-mono uppercase tracking-[0.15em] text-[#8E9C78] font-bold block">Account Created</span>
+            <h2 className="font-serif text-2xl font-bold text-[#1C1C1A]">Check your email</h2>
+            <p className="text-sm text-[#6F6F6A] leading-relaxed">
+              We've sent a verification link to <strong className="text-[#1C1C1A]">{email}</strong>.
+              Please open that email and click the link to verify your account.
+            </p>
+          </div>
+
+          <div className="bg-white border border-[#D8D4C8] rounded-sm p-4 text-left space-y-2">
+            <p className="text-[10px] font-mono uppercase tracking-wider text-[#6F6F6A] font-semibold">Next steps</p>
+            {[
+              "Open your inbox for the verification email",
+              "Click the verification link in the email",
+              "Return here and sign in with your credentials",
+            ].map((step, i) => (
+              <div key={i} className="flex items-start gap-2">
+                <span className="text-[#8E9C78] font-mono text-xs font-bold shrink-0 mt-0.5">{i + 1}.</span>
+                <p className="text-xs text-[#6F6F6A] leading-relaxed">{step}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="space-y-2 pt-1">
+            <button
+              onClick={() => {
+                setSignupSuccess(false)
+                setIsSignUp(false)
+                setPassword("")
+              }}
+              className="w-full bg-[#1C1C1A] hover:bg-[#3A3A38] text-[#F7F5F0] py-3 text-xs font-semibold rounded-xs tracking-wider uppercase font-mono transition-colors cursor-pointer border-none"
+            >
+              Go to Sign In
+            </button>
+            <button
+              onClick={onBackToLanding}
+              className="text-xs text-[#6F6F6A] hover:text-[#1C1C1A] font-semibold underline bg-transparent border-0 cursor-pointer"
+            >
+              ← Back to Main Page
+            </button>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   return (
-    <div className="min-h-screen bg-[#F7F5F0] flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-sans">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
+    <div className="min-h-screen bg-[#F7F5F0] flex flex-col justify-center py-8 px-4 sm:px-6 lg:px-8 font-sans">
+      <div className="mx-auto w-full max-w-md text-center">
         {/* Logo */}
         <button
           onClick={onBackToLanding}
@@ -172,8 +265,8 @@ export default function Login({
         </p>
       </div>
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4">
-        <div className="bg-white py-8 px-6 border border-[#D8D4C8] rounded-sm shadow-[0_2px_40px_rgba(28,28,26,0.03)] space-y-6">
+      <div className="mt-8 mx-auto w-full max-w-md px-0">
+        <div className="bg-white py-8 px-5 sm:px-6 border border-[#D8D4C8] rounded-sm shadow-[0_2px_40px_rgba(28,28,26,0.03)] space-y-6">
           {/* Cloud vs Sandbox Banner */}
           {!isCloud && (
             <div className="bg-amber-50 border border-amber-100 p-3 rounded-xs flex gap-2.5 items-start">
@@ -202,6 +295,25 @@ export default function Login({
           {errorMsg && (
             <div className="bg-rose-50 text-rose-700 border border-rose-100 p-3 text-xs font-semibold rounded-xs">
               {errorMsg}
+            </div>
+          )}
+
+          {rateLimitCooldown > 0 && (
+            <div className="bg-amber-50 border border-amber-200 rounded-sm p-4 text-left space-y-2">
+              <div className="flex items-start gap-2.5">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="#d97706" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 mt-0.5">
+                  <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                <div>
+                  <p className="text-xs font-bold text-amber-800">Email sending limit reached</p>
+                  <p className="text-[11px] text-amber-700 mt-0.5 leading-relaxed">
+                    Our email service is temporarily rate-limited. Please wait <strong>{rateLimitCooldown}s</strong> before trying again.
+                  </p>
+                  <p className="text-[10px] text-amber-600 mt-1.5 font-mono">
+                    💡 Tip: Check your spam/junk folder — your verification email may have already been sent.
+                  </p>
+                </div>
+              </div>
             </div>
           )}
 
@@ -369,6 +481,27 @@ export default function Login({
                   className="w-full bg-[#FAFAF8] border border-[#D8D4C8] hover:border-[#6F6F6A] focus:border-[#1C1C1A] outline-none text-sm text-[#1C1C1A] pl-9 pr-4 py-2 rounded-xs"
                 />
               </div>
+
+              {/* Real-time password strength — only shown during sign-up */}
+              {showStrength && (
+                <div className="bg-[#FAFAF8] border border-[#D8D4C8] rounded-xs p-3 space-y-1.5 mt-1">
+                  <p className="text-[9px] font-mono uppercase tracking-wider text-[#6F6F6A] mb-1">Password requirements</p>
+                  {[
+                    { ok: pwStrength.minLength, label: "At least 6 characters" },
+                    { ok: pwStrength.hasUpper, label: "At least 1 uppercase letter" },
+                    { ok: pwStrength.hasNumber, label: "At least 1 number" },
+                    { ok: pwStrength.hasSpecial, label: "At least 1 special character (!@#$…)" },
+                  ].map(({ ok, label }) => (
+                    <div key={label} className="flex items-center gap-1.5">
+                      {ok
+                        ? <CheckCircle2 size={12} className="text-[#8E9C78] shrink-0" />
+                        : <XCircle size={12} className="text-rose-400 shrink-0" />
+                      }
+                      <span className={`text-[10px] font-sans ${ ok ? "text-[#8E9C78]" : "text-rose-500" }`}>{label}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Terms and Conditions Checkbox */}
@@ -410,9 +543,9 @@ export default function Login({
             <div className="pt-2">
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || rateLimitCooldown > 0}
                 className={`w-full py-3 text-sm font-semibold tracking-wide rounded-xs transition-all flex justify-center items-center gap-2 ${
-                  isVerified
+                  isVerified && rateLimitCooldown === 0
                     ? "bg-[#1C1C1A] text-[#F7F5F0] hover:bg-[#3A3A38] cursor-pointer"
                     : "bg-[#1C1C1A]/50 text-[#F7F5F0]/70 cursor-not-allowed"
                 }`}
@@ -420,7 +553,9 @@ export default function Login({
                 {loading && (
                   <div className="w-4 h-4 rounded-full border border-t-transparent border-white animate-spin" />
                 )}
-                {isSignUp ? "Register Account" : "Sign In"}
+                {rateLimitCooldown > 0
+                  ? `Wait ${rateLimitCooldown}s...`
+                  : isSignUp ? "Register Account" : "Sign In"}
               </button>
             </div>
           </form>

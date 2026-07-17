@@ -44,8 +44,31 @@ export default function PublicFilePage({ qr }: { qr: QRCodeData }) {
           </p>
         </div>
 
+        {/* Media Preview Section */}
+        {fileUrl && fileUrl !== "#" && (
+          <div className="mt-6 border-t border-[#EDE9E0] pt-6">
+            {fileType.startsWith("image/") ? (
+              <div className="border border-[#D8D4C8] rounded-xs overflow-hidden bg-[#F7F5F0]">
+                <img
+                  src={fileUrl}
+                  alt={fileName}
+                  className="w-full h-auto max-h-[300px] object-contain mx-auto"
+                />
+              </div>
+            ) : fileType.startsWith("video/") ? (
+              <div className="border border-[#D8D4C8] rounded-xs overflow-hidden bg-black">
+                <video
+                  src={fileUrl}
+                  controls
+                  className="w-full h-auto max-h-[300px]"
+                />
+              </div>
+            ) : null}
+          </div>
+        )}
+
         {/* Download Section */}
-        <div className="pt-8 space-y-6">
+        <div className="pt-6 space-y-6">
           <p className="text-center text-sm text-[#6F6F6A] leading-relaxed">
             This file has been securely shared via Thateasy_qr. Click the button
             below to download the file directly to your device.

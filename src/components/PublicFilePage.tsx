@@ -1,6 +1,9 @@
+import { useState } from "react"
 import { QRCodeData } from "../lib/db"
 
 export default function PublicFilePage({ qr }: { qr: QRCodeData }) {
+  const [downloading, setDownloading] = useState(false)
+
   const {
     fileName = "Shared File",
     fileSize = "Unknown Size",
@@ -14,6 +17,30 @@ export default function PublicFilePage({ qr }: { qr: QRCodeData }) {
   }
 
   const extension = getFileExtension(fileName)
+
+  const handleDownloadFile = async () => {
+    if (!fileUrl || fileUrl === "#") return
+    setDownloading(true)
+    try {
+      const response = await fetch(fileUrl, { mode: "cors" })
+      if (!response.ok) throw new Error("Fetch failed")
+      const blob = await response.blob()
+      const blobUrl = URL.createObjectURL(blob)
+      const link = document.createElement("a")
+      link.href = blobUrl
+      link.download = fileName
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 2000)
+    } catch (err) {
+      console.warn("Direct blob download failed, opening in new tab:", err)
+      // Fallback: open URL directly in new tab if blob fetch fails
+      window.open(fileUrl, "_blank", "noopener,noreferrer")
+    } finally {
+      setDownloading(false)
+    }
+  }
 
   return (
     <div className="min-h-screen bg-[#F7F5F0] py-12 px-4 flex flex-col items-center justify-center font-sans">
@@ -74,15 +101,20 @@ export default function PublicFilePage({ qr }: { qr: QRCodeData }) {
             below to download the file directly to your device.
           </p>
 
-          <a
-            href={fileUrl}
-            download={fileName}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block w-full bg-[#1C1C1A] text-[#F7F5F0] hover:bg-[#3A3A38] text-center py-3.5 text-sm font-semibold tracking-wide rounded-xs transition-colors cursor-pointer"
+          <button
+            onClick={handleDownloadFile}
+            disabled={downloading}
+            className="w-full bg-[#1C1C1A] text-[#F7F5F0] hover:bg-[#3A3A38] text-center py-3.5 text-sm font-semibold tracking-wide rounded-xs transition-colors cursor-pointer border-none flex items-center justify-center gap-2 disabled:opacity-70"
           >
-            Download File ({fileSize})
-          </a>
+            {downloading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                <span>Downloading File...</span>
+              </>
+            ) : (
+              <span>Download File ({fileSize})</span>
+            )}
+          </button>
         </div>
       </div>
 
@@ -90,7 +122,7 @@ export default function PublicFilePage({ qr }: { qr: QRCodeData }) {
       <div className="mt-8 text-center text-xs text-[#6F6F6A]">
         <span>Powered by </span>
         <span className="font-serif font-bold text-[#1C1C1A]">
-          Nova<span className="italic text-[#8E9C78]">QR</span>
+          Thateasy<span className="italic text-[#8E9C78]">_qr</span>
         </span>
       </div>
     </div>
